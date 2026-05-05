@@ -1,3 +1,4 @@
+
 # Build output
 build/
  
@@ -12,3 +13,7 @@ data/
  
 # CMake user files
 CMakeUserPresets.json
+
+.DS_Store
+.DS_Store
+
