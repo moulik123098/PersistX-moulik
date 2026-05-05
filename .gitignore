@@ -1,0 +1,14 @@
+# Build output
+build/
+ 
+# Data files generated at runtime
+data/
+ 
+# macOS noise
+.DS_Store
+ 
+# VS Code
+.vscode/
+ 
+# CMake user files
+CMakeUserPresets.json
