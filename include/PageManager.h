@@ -6,12 +6,14 @@
 #include <optional>
 
 #include "Page.h"
+#include "DiskManager.h"
 
 class PageManager
 {
 private:
     std::vector<Page> pages;
     int nextPageId;
+    DiskManager disk;
 
     Page &allocatePage();
 

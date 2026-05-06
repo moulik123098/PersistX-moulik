@@ -1,10 +1,24 @@
 #include "PageManager.h"
 
 #include <iostream>
+#include<algorithm>
 
-PageManager::PageManager() : nextPageId(0)
-{
-    allocatePage();
+PageManager::PageManager() : nextPageId(0), disk("data") {
+   
+    pages = disk.readAllPages();
+ 
+    if (pages.empty()) {
+        std::cout << "[PAGE MANAGER] No existing data found. Starting fresh.\n";
+        allocatePage();
+    } else {
+        
+        for (auto& page : pages) {
+            if (page.getPageId() >= nextPageId)
+                nextPageId = page.getPageId() + 1;
+        }
+        std::cout << "[PAGE MANAGER] Restored " << pages.size()
+                  << " page(s) from disk.\n";
+    }
 }
 
 Page &PageManager::allocatePage()
@@ -14,18 +28,15 @@ Page &PageManager::allocatePage()
     return pages.back();
 }
 
-void PageManager::insert(std::string &key, std::string &value)
-{
-
-    Page &lastPage = pages.back();
-
-    if (lastPage.isFull())
-    {
-        std::cout << "[PAGE MANAGER] Page " << lastPage.getPageId() << " is full. Allocating new page.\n";
+void PageManager::insert(std::string& key, std::string& value) {
+    if (pages.back().isFull()) {
+        std::cout << "[PAGE MANAGER] Page " << pages.back().getPageId()
+                  << " is full. Allocating new page.\n";
         allocatePage();
     }
-
+ 
     pages.back().insert(key, value);
+    disk.writePage(pages.back()); 
 }
 
 std::optional<std::string> PageManager::search(std::string &key)
@@ -44,6 +55,7 @@ bool PageManager::remove(std::string &key)
 {
     for (auto &page : pages)
     {
+        disk.writePage(page);
         if (page.remove(key))
             return true;
     }

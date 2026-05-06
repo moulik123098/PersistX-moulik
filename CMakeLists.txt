@@ -13,7 +13,10 @@ include_directories(include)
 # Collect all source files
 add_executable(db_engine
     src/main.cpp
-    src/Database.cpp
+    src/DiskManager.cpp
     src/Page.cpp
     src/PageManager.cpp
 )
+if(APPLE)
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "10.15")
+endif()

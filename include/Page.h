@@ -20,6 +20,7 @@ private:
 
 public:
     Page(int id);
+
     bool insert(std::string &key, std::string &value);
     std::optional<std::string> search(std::string &key);
     bool remove(std::string &key);
@@ -48,6 +49,10 @@ public:
     bool isFull()
     {
         return usedSpace + RECORD_SIZE > PAGE_SIZE;
+    }
+
+    std::vector<Record>& getSlots(){
+        return slots;
     }
 };
 
