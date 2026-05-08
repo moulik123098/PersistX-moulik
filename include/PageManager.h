@@ -7,13 +7,15 @@
 
 #include "Page.h"
 #include "DiskManager.h"
+#include "BufferPool.h"
 
 class PageManager
 {
 private:
-    std::vector<Page> pages;
+    std::vector<int> pageIds;
     int nextPageId;
     DiskManager disk;
+    BufferPool buffer;
 
     Page &allocatePage();
 
@@ -29,9 +31,16 @@ public:
 
     size_t pageCount()
     {
-        return pages.size();
+        return pageIds.size();
     }
     size_t recordCount();
+
+    void flushAll(){
+        buffer.flushAll();
+    }
+    void displayBufferStats(){
+        buffer.displayStats();
+    }
 };
 
 #endif

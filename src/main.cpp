@@ -3,6 +3,7 @@
 
 #include "PageManager.h"
 
+
 void Menu()
 {
 
@@ -12,7 +13,9 @@ void Menu()
     std::cout << "3. Remove record\n";
     std::cout << "4. Display all pages\n";
     std::cout << "5. Get page by ID\n";
-    std::cout << "6. Exit\n";
+    std::cout << "6. Buffer pool stats\n";
+    std::cout << "7. Flush all to disk\n";
+    std::cout << "8. Exit\n";
     std::cout << "Enter choice: ";
 }
 
@@ -84,9 +87,17 @@ int main()
         }
 
         case 6:
-            std::cout << "Exiting.\n";
-                return 0;
+            pm.displayBufferStats();
             break;
+
+        case 7:
+                pm.flushAll();
+                break;
+
+        case 8:
+                pm.flushAll();  
+                std::cout << "Exiting...\n";
+                return 0;
 
         default:
             std::cout << "Invalid choice. Enter 1-5.\n";
