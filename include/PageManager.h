@@ -41,6 +41,13 @@ public:
     void displayBufferStats(){
         buffer.displayStats();
     }
+
+    BufferPool& getBuffer(){
+        return buffer;
+    }
+    std::vector<int>& getPageIds(){
+        return pageIds;
+    }
 };
 
 #endif

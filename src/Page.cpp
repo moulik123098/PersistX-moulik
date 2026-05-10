@@ -71,7 +71,7 @@ void Page::display()
         return;
     }
 
-    for (size_t i = 0; i < slots.size(); ++i)
+    for (size_t i = 0; i < slots.size(); i++)
     {
         std::cout << "  [" << std::setw(2) << i << "] "
                   << std::setw(16) << std::left << slots[i].key

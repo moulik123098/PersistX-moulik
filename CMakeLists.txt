@@ -18,4 +18,5 @@ add_executable(db_engine
     src/PageManager.cpp
     src/DiskManager.cpp
     src/BufferPool.cpp
+    src/QueryEngine.cpp
 )

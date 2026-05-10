@@ -2,6 +2,7 @@
 #include <string>
 
 #include "PageManager.h"
+#include "QueryEngine.h"
 
 
 void Menu()
@@ -9,13 +10,14 @@ void Menu()
 
     std::cout << "\n--- Page Manager ---\n";
     std::cout << "1. Insert record\n";
-    std::cout << "2. Search record\n";
-    std::cout << "3. Remove record\n";
-    std::cout << "4. Display all pages\n";
-    std::cout << "5. Get page by ID\n";
-    std::cout << "6. Buffer pool stats\n";
-    std::cout << "7. Flush all to disk\n";
-    std::cout << "8. Exit\n";
+    std::cout << "2. Remove record\n";
+    std::cout << "3. Get by key\n";
+    std::cout << "4. List all record\n";
+    std::cout << "5. Filter by prefix\n";
+    std::cout << "6. Display all pages\n";
+    std::cout << "7. Buffer Pool stats\n";
+    std::cout << "8. Flush to disk\n";
+    std::cout << "9. Exit\n";
     std::cout << "Enter choice: ";
 }
 
@@ -23,6 +25,7 @@ int main()
 {
 
     PageManager pm;
+    QueryEngine qe(pm.getBuffer(), pm.getPageIds());
 
     short choice;
 
@@ -40,7 +43,7 @@ int main()
             continue;
         }
 
-        std::string key, value;
+        std::string key, value,prefix;
 
         switch (choice)
         {
@@ -56,45 +59,45 @@ int main()
         case 2:
             std::cout << "Enter key: ";
             std::cin >> key;
-            {
-                auto result = pm.search(key);
-                if (result)
-                    std::cout << "Found: " << *result << "\n";
-                else
-                    std::cout << "Key not found.\n";
-            }
+            pm.remove(key);
             break;
 
         case 3:
             std::cout << "Enter key: ";
             std::cin >> key;
-            pm.remove(key);
-            break;
+            {
+                auto result = qe.get(key);
+                if(result) std::cout << "Found: " << *result << "\n";
+                    else std::cout << "Not found.\n";
+                }
+                break;
+            
 
         case 4:
-            pm.display();
+            qe.displayAll();
             break;
 
         case 5:
         {
-            std::cout << "Enter Page ID: ";
-            int pageId;
-            std::cin>>pageId;
-            Page* p = pm.getPage(pageId);
-            if(p) p->display();
-            else   std::cout << "Page " << pageId << " not found.\n";
+            std::cout << "Enter prefix: ";
+            std::cin >> prefix;
+            qe.displayPrefix(prefix);
             break;
         }
 
         case 6:
-            pm.displayBufferStats();
+            pm.display();
             break;
 
         case 7:
-                pm.flushAll();
+                pm.displayBufferStats();
                 break;
 
         case 8:
+                pm.flushAll();
+                break;
+
+        case 9:
                 pm.flushAll();  
                 std::cout << "Exiting...\n";
                 return 0;
