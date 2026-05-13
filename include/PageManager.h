@@ -9,45 +9,38 @@
 #include "DiskManager.h"
 #include "BufferPool.h"
 
-class PageManager
-{
+class QueryEngine;
+
+class PageManager {
 private:
     std::vector<int> pageIds;
     int nextPageId;
     DiskManager disk;
     BufferPool buffer;
+    QueryEngine* qe;
 
-    Page &allocatePage();
+    Page& allocatePage();
 
 public:
     PageManager();
 
-    void insert(std::string &key, std::string &value);
-    std::optional<std::string> search(std::string &key);
-    bool remove(std::string &key);
+    void insert(const std::string& key, const std::string& value);
+    std::optional<std::string> search(const std::string& key);
+    bool remove(const std::string& key);
 
     void display();
-    Page *getPage(int pageId);
+    Page* getPage(int pageId);
 
-    size_t pageCount()
-    {
-        return pageIds.size();
-    }
+    size_t pageCount()  { return pageIds.size(); }
     size_t recordCount();
 
-    void flushAll(){
-        buffer.flushAll();
-    }
-    void displayBufferStats(){
-        buffer.displayStats();
-    }
+    void flushAll()           { buffer.flushAll(); }
+    void displayBufferStats() { buffer.displayStats(); }
 
-    BufferPool& getBuffer(){
-        return buffer;
-    }
-    std::vector<int>& getPageIds(){
-        return pageIds;
-    }
+    BufferPool& getBuffer()        { return buffer; }
+    std::vector<int>& getPageIds() { return pageIds; }
+
+    void setQueryEngine(QueryEngine* engine) { qe = engine; }
 };
 
 #endif
