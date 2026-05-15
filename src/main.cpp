@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include<limits>
 
 #include "PageManager.h"
 #include "QueryEngine.h"
@@ -8,20 +9,34 @@
 void Menu()
 {
 
-    std::cout << "\n--- Page Manager ---\n";
-    std::cout << "1. Insert record\n";
-    std::cout << "2. Remove record\n";
-    std::cout << "3. Get by key\n";
-    std::cout << "4. List all record\n";
-    std::cout << "5. Filter by prefix\n";
-    std::cout << "6. Range query\n";
-    std::cout << "7. Show index\n";
-    std::cout << "8. Rebuild index\n";
-    std::cout << "9. Display all pages\n";
-    std::cout << "10. Buffer Pool stats\n";
-    std::cout << "11. Flush to disk\n";
-    std::cout << "12. Exit\n";
-    std::cout << "Enter choice: ";
+    std::cout << "\n";
+    std::cout << "  +===========================================+\n";
+    std::cout << "  |         P A G E  D B  E N G I N E         |\n";
+    std::cout << "  +===========================================+\n";
+    std::cout << "  |                                           |\n";
+    std::cout << "  |   RECORDS                                 |\n";
+    std::cout << "  |    1.  Insert record                      |\n";
+    std::cout << "  |    2.  Remove record                      |\n";
+    std::cout << "  |    3.  Get by key                         |\n";
+    std::cout << "  |    4.  List all records                   |\n";
+    std::cout << "  |                                           |\n";
+    std::cout << "  |   QUERIES                                 |\n";
+    std::cout << "  |    5.  Filter by prefix                   |\n";
+    std::cout << "  |    6.  Range query                        |\n";
+    std::cout << "  |                                           |\n";
+    std::cout << "  |   INDEX                                   |\n";
+    std::cout << "  |    7.  Show index                         |\n";
+    std::cout << "  |    8.  Rebuild index                      |\n";
+    std::cout << "  |                                           |\n";
+    std::cout << "  |   STORAGE                                 |\n";
+    std::cout << "  |    9.  Display all pages                  |\n";
+    std::cout << "  |   10.  Buffer pool stats                  |\n";
+    std::cout << "  |   11.  Flush to disk                      |\n";
+    std::cout << "  |                                           |\n";
+    std::cout << "  |   12.  Exit                               |\n";
+    std::cout << "  |                                           |\n";
+    std::cout << "  +===========================================+\n";
+    std::cout << "\n  Choice: ";
 }
 
 int main()
