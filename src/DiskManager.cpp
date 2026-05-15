@@ -42,6 +42,8 @@ std::vector<Page> DiskManager::readAllPages() {
     std::sort(files.begin(), files.end());
 
     for (auto& filePath : files) {
+        if (filePath.filename() == "wal.log") continue;
+        
         std::ifstream file(filePath);
         if (!file.is_open()) continue;
         std::string line;

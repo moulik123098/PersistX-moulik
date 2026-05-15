@@ -2,8 +2,11 @@
 #include "QueryEngine.h"
 #include <iostream>
 
-PageManager::PageManager() : nextPageId(0), disk("data"), buffer(disk), qe(nullptr) {
+PageManager::PageManager() : nextPageId(0), disk("data"), buffer(disk), wal("data"), qe(nullptr) {
     auto pages = disk.readAllPages();
+
+    if(wal.hasPendingEntries()) recoverFromWAL(pages);
+
     if (pages.empty()) {
         std::cout << "[PAGE MANAGER] No existing data found. Starting fresh.\n";
         allocatePage();
@@ -17,6 +20,50 @@ PageManager::PageManager() : nextPageId(0), disk("data"), buffer(disk), qe(nullp
     }
 }
 
+void PageManager::recoverFromWAL(std::vector<Page>& pages) {
+
+    auto entries = wal.readAll();
+    std::cout << "[WAL] Found " << entries.size()
+              << " unfinished operation(s). Recovering...\n";
+ 
+    for (auto& entry : entries) {
+        if (entry.op == WALOp::INSERT) {
+            bool found = false;
+            for (auto& page : pages) {
+                if (page.search(entry.key)) {
+                    page.remove(entry.key);
+                    page.insert(entry.key, entry.value);
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                for (auto& page : pages) {
+                    if (!page.isFull()) {
+                        page.insert(entry.key, entry.value);
+                        found = true;
+                        break;
+                    }
+                }
+            }
+            std::cout << "[WAL] Recovered INSERT key=\"" << entry.key << "\"\n";
+        }
+        else if (entry.op == WALOp::REMOVE) {
+            for (auto& page : pages) {
+                if (page.search(entry.key)) {
+                    page.remove(entry.key);
+                    break;
+                }
+            }
+            std::cout << "[WAL] Recovered REMOVE key=\"" << entry.key << "\"\n";
+        }
+    }
+    for (auto& page : pages)
+        disk.writePage(page);
+    wal.clear();
+    std::cout << "[WAL] Recovery complete.\n";
+}
+
 Page& PageManager::allocatePage() {
     int id = nextPageId++;
     pageIds.push_back(id);
@@ -26,6 +73,8 @@ Page& PageManager::allocatePage() {
 }
 
 void PageManager::insert(const std::string& key, const std::string& value) {
+    wal.append(WALOp::INSERT, key, value);
+
     int lastId = pageIds.back();
     if (buffer.getPage(lastId).isFull()) {
         std::cout << "[PAGE MANAGER] Page " << lastId << " full. Allocating new page.\n";
@@ -51,6 +100,8 @@ std::optional<std::string> PageManager::search(const std::string& key) {
 }
 
 bool PageManager::remove(const std::string& key) {
+    wal.append(WALOp::REMOVE, key);
+
     for (int id : pageIds) {
         Page& page = buffer.getPage(id);
         if (page.remove(key)) {
@@ -83,4 +134,9 @@ size_t PageManager::recordCount() {
     for (int id : pageIds)
         total += buffer.getPage(id).getRecordCount();
     return total;
+}
+
+void PageManager::flushAll() {
+    buffer.flushAll();
+    wal.clear();  
 }

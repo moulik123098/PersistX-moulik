@@ -8,6 +8,7 @@
 #include "Page.h"
 #include "DiskManager.h"
 #include "BufferPool.h"
+#include "WALManager.h"
 
 class QueryEngine;
 
@@ -17,9 +18,11 @@ private:
     int nextPageId;
     DiskManager disk;
     BufferPool buffer;
+    WALManager wal;
     QueryEngine* qe;
 
     Page& allocatePage();
+    void recoverFromWAL(std::vector<Page>& pages);
 
 public:
     PageManager();
@@ -34,7 +37,7 @@ public:
     size_t pageCount()  { return pageIds.size(); }
     size_t recordCount();
 
-    void flushAll()           { buffer.flushAll(); }
+    void flushAll();
     void displayBufferStats() { buffer.displayStats(); }
 
     BufferPool& getBuffer()        { return buffer; }

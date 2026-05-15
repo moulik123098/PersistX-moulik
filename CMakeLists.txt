@@ -19,4 +19,5 @@ add_executable(db_engine
     src/DiskManager.cpp
     src/BufferPool.cpp
     src/QueryEngine.cpp
+    src/WALManager.cpp
 )
